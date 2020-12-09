@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Layer_2"
+   data-name="Layer 2"
+   viewBox="0 0 110 55"
+   version="1.1"
+   sodipodi:docname="hulu_plus.svg"
+   width="110"
+   height="55"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata21">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview19"
+     showgrid="false"
+     inkscape:zoom="2.4912281"
+     inkscape:cx="56"
+     inkscape:cy="26.5"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Layer_2" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">.cls-1{fill:#38ce7f;}.cls-2,.cls-3{fill:#fff;}.cls-3{fill-rule:evenodd;}</style>
+  </defs>
+  <title
+     id="title6">Artboard 7</title>
+  <rect
+     class="cls-1"
+     x="0"
+     y="0"
+     width="110"
+     height="55"
+     id="rect8"
+     style="fill:#38ce7f" />
+  <rect
+     class="cls-2"
+     x="61.220001"
+     y="14.06"
+     width="4.52"
+     height="23.860001"
+     id="rect10"
+     style="fill:#ffffff" />
+  <path
+     class="cls-3"
+     d="M 25.51,14.06 H 30 V 22 a 2.85,2.85 0 0 1 1.45,-0.32 h 3.47 a 4.93,4.93 0 0 1 4.91,4.91 v 11.33 h -4.5 V 28.27 A 1.5,1.5 0 0 0 33.84,26.78 H 31.52 A 1.5,1.5 0 0 0 30,28.27 v 9.65 h -4.49 z"
+     id="path12"
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;fill-rule:evenodd" />
+  <path
+     class="cls-3"
+     d="M 57.53,21.65 V 33 a 4.93,4.93 0 0 1 -4.91,4.92 H 48.23 A 4.93,4.93 0 0 1 43.32,33 V 21.65 h 4.52 v 9.83 A 1.5,1.5 0 0 0 49.33,33 h 2.19 A 1.5,1.5 0 0 0 53,31.47 v -9.82 z"
+     id="path14"
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;fill-rule:evenodd" />
+  <path
+     class="cls-3"
+     d="M 83.64,21.65 V 33 a 4.93,4.93 0 0 1 -4.91,4.92 h -4.4 A 4.93,4.93 0 0 1 69.42,33 V 21.65 h 4.52 v 9.83 A 1.5,1.5 0 0 0 75.43,33 h 2.19 a 1.5,1.5 0 0 0 1.49,-1.49 v -9.86 z"
+     id="path16"
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;fill-rule:evenodd" />
+</svg>
