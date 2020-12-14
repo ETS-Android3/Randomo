@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">Random Movie Spinner</string>
+    <string-array name="spinner_genres">
+        <item>All Genres</item>
+        <item>Action &amp; Adventure</item>
+        <item>Animation</item>
+        <item>Anime</item>
+        <item>Biography</item>
+        <item>Children</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Cult</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Fantasy</item>
+        <item>Food</item>
+        <item>Game Show</item>
+        <item>History</item>
+        <item>Home &amp; Garden</item>
+        <item>Horror</item>
+        <item>Independent</item>
+        <item>Musical</item>
+        <item>Reality</item>
+        <item>Romance</item>
+        <item>Science-Fiction</item>
+        <item>Sports</item>
+        <item>Stand-up &amp; Talk</item>
+        <item>Thriller</item>
+        <item>Travel</item>
+    </string-array>
+
+    <string-array name="imdbScore">
+        <item>Any</item>
+        <item>>9</item>
+        <item>>8</item>
+        <item>>7</item>
+        <item>>6</item>
+        <item>>5</item>
+    </string-array>
 </resources>
