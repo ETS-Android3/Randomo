@@ -2,7 +2,9 @@ package com.mahan.randommoviespinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -102,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
 
 
+
+
+
     }
 
     private void initializeHashMaps() {
@@ -146,6 +152,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         headerCodes.put(">7","7");
         headerCodes.put(">6","6");
         headerCodes.put(">5","5");
+        headerCodes.put("netflix",Integer.toString(R.drawable.ic_watch_netflix));
+        headerCodes.put("amazon_prime",Integer.toString(R.drawable.ic_watch_amazon));
+        headerCodes.put("hulu_plus",Integer.toString(R.drawable.ic_watch_hulu));
+        headerCodes.put("disney_plus",Integer.toString(R.drawable.ic_watch_disney));
+        headerCodes.put("hbo_max",Integer.toString(R.drawable.ic_watch_hbo));
+        headerCodes.put("apple_tv_plus",Integer.toString(R.drawable.ic_watch_apple));
 
     }
 
@@ -160,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
             StringBuilder urlBuilder = new StringBuilder("https://api.reelgood.com/v3.0/content/random?");
 
-            HashMap<String, String> headers = new HashMap<>();
+            final HashMap<String, String> headers = new HashMap<>();
 
             if (movieCB.isChecked() && showCB.isChecked()) {
                 headers.put("content_kind", "both");
@@ -208,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         @Override
                         public void onResponse(String response) {
                             try {
-                                setMovie(new JSONObject(response));
+                                setMovie(new JSONObject(response), headers.get("sources"));
                             } catch (JSONException e) {
                                 onSpin(view);
                             }
@@ -232,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     }
 
-    private void setMovie(JSONObject result) throws JSONException {
+    private void setMovie(JSONObject result, final String src) throws JSONException {
         System.out.println(result);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         movieView = (LinearLayout) inflater.inflate(R.layout.movie_layout,null);
@@ -293,13 +305,43 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         TextView descriptionView = movieView.findViewById(R.id.descriptionView);
         descriptionView.setText(description);
 
-        Button watchButton = movieView.findViewById(R.id.watchButtonView);
-        watchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri uri = Uri.parse(result.getString())
-            }
-        });
+        final Button watchButton = movieView.findViewById(R.id.watchButtonView);
+        StringBuilder urlBuilder = new StringBuilder("https://api.reelgood.com/v3.0/content/" + type + "/" + id + "?");
+
+        HashMap<String,String> headers = new HashMap<>();
+        headers.put("free","false");
+        headers.put("region","us");
+        headers.put("sources",src);
+        headers.put("interaction","true");
+        for (HashMap.Entry<String,String> header: headers.entrySet()){
+            urlBuilder.append(header.getKey() + "=" + header.getValue() + "&");
+        }
+
+
+        final String finalType = type;
+        StringRequest linkRequest = new StringRequest(
+                Request.Method.GET,
+                urlBuilder.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            setButton(new JSONObject(response),watchButton, src, finalType);
+                        } catch (JSONException e) {
+                            watchButton.setText("No link :(");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        watchButton.setText("No link :(");
+                    }
+                }
+
+        );
+
+        requestQueue.add(linkRequest);
 
         mainLinear.addView(movieView);
 
@@ -307,10 +349,64 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         canSpin = true;
     }
 
+    private void setButton(JSONObject details, Button btn, String src, String type) throws JSONException {
+        JSONArray sources = details.getJSONArray("sources");
+        String source = sources.getString(0);
+        for (int i = 0; i < sources.length(); i++) {
+            if(src.contains(sources.getString(i))){
+                source = sources.getString(i);
+                break;
+            }
+        }
+
+        JSONArray availability;
+        if(type.equals("movie")){
+             availability = details.getJSONArray("availability");
+        }
+        else{
+            String epID = details.getJSONObject("recommended_episode").getString("episode_id");
+            availability = details.getJSONObject("episodes").getJSONObject(epID).getJSONArray("availability");
+        }
+
+        String link = availability.getJSONObject(0).getJSONObject("source_data").getJSONObject("links").getString("android");
+        String linkBackup = availability.getJSONObject(0).getJSONObject("source_data").getJSONObject("links").getString("web");
+        for (int i = 0; i < availability.length(); i++) {
+            if(availability.getJSONObject(i).getString("source_name").equals(source)){
+                link = availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").getString("android");
+                linkBackup = availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").getString("web");
+                break;
+
+            }
+        }
+        int resource = Integer.parseInt(headerCodes.get(source));
+
+        btn.setBackgroundResource(resource);
+        btn.setText("");
+        System.out.println(link);
+        final String finalLink = link;
+        final String finalLinkBackup = linkBackup;
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Uri uri = Uri.parse(finalLink);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e){
+                    Uri uri = Uri.parse(finalLinkBackup);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            }
+        });
+
+
+    }
+
     private String valueToKey(JSONArray arr) throws JSONException {
         if(arr.length() == 0){return "";};
 
-        String res = "";
+        String res = ", ";
         for (int i = 0; i < arr.length() ; i++) {
             for (HashMap.Entry<String,String> entry : headerCodes.entrySet()){
                 if(entry.getValue().equals(arr.getString(i)) && entry.getKey().length() > 2){

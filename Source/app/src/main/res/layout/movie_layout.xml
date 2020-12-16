@@ -128,9 +128,10 @@
 
     <Button
         android:id="@+id/watchButtonView"
-        android:layout_width="wrap_content"
+        android:layout_width="327dp"
         android:layout_height="80dp"
-        android:background="@drawable/ic_watch_netflix"
+        android:text="Loading..."
+        android:background="#FFFFFF"
         android:layout_gravity="center_horizontal"
         android:layout_marginVertical="20dp"/>
 
