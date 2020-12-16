@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/MovieTitle"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Haider"
+                android:gravity="center_horizontal"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"/>
+
+            <ImageView
+                android:id="@+id/moviePosterView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="150dp"
+                android:layout_height="200dp"
+                app:srcCompat="@drawable/ic_no_poster"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="20dp">
+
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/yearView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:text="2014"
+                        android:textSize="15sp"
+                        android:layout_marginEnd="15dp"/>
+
+                    <TextView
+                        android:id="@+id/durationView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:text="2h30m"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/imdbView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:text="IMDB:8.1/10"
+                    android:textSize="15sp"
+                    android:layout_marginVertical="5dp"/>
+
+                <TextView
+                    android:id="@+id/movieGenreView"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="Crime, Drama"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/descriptionView"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="A young African American man, reeling from the tragic loss of his wife, travels to rural Maine to seek answers..."
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="start"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/seen_button_round"
+                android:text="Seen it?"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="50dp"
+                android:paddingVertical="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/watchButtonView"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:background="@drawable/ic_watch_netflix"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="20dp"/>
+
+
+
+
+
+</LinearLayout>

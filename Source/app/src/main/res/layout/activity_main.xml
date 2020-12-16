@@ -7,140 +7,159 @@
     tools:context=".MainActivity"
     android:background="@color/colorPrimary">
 
-    <LinearLayout
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:orientation="vertical"
-        android:layout_marginVertical="20dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            
-            <Button
-                android:id="@+id/netflixBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_netflix"
-                android:onClick="onServiceClick"
-                />
-
-            <Button
-                android:id="@+id/disneyBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_disney_plus_disable"
-                android:layout_marginHorizontal="20dp"
-                android:onClick="onServiceClick"
-                />
-
-            <Button
-                android:id="@+id/appleBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_apple_tv_plus_disable"
-                android:onClick="onServiceClick"
-                />
-            
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:layout_marginVertical="16dp">
-
-            <Button
-                android:id="@+id/huluBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_hulu_disable"
-                android:onClick="onServiceClick"
-                />
-
-            <Button
-                android:id="@+id/amazonBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_amazon_prime_disable"
-                android:layout_marginHorizontal="20dp"
-                android:onClick="onServiceClick"
-                />
-
-            <Button
-                android:id="@+id/hboBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_hbo_max_disable"
-                android:onClick="onServiceClick"/>
-
-        </LinearLayout>
-
-
-        <Spinner
-            android:id="@+id/genreSpinner"
+            android:id="@+id/mainLinear"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/spinner_genres"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginHorizontal="24dp"
+            android:orientation="vertical"
+            android:layout_marginVertical="20dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginVertical="16dp"
-            android:layout_marginLeft="10dp"
-            >
-            <CheckBox
-                android:id="@+id/movieCB"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Movie"
-                android:textColor="#FFFFFF"
-                android:buttonTint="#FFFFFF"
-                android:padding="5dp"
-                android:gravity="start"
-                />
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <CheckBox
-                android:id="@+id/showCB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TV Show"
-                android:textColor="#FFFFFF"
-                android:buttonTint="#FFFFFF"
-                android:padding="5dp"
-                android:gravity="end"
-                />
 
-            <TextView
+                <Button
+                    android:id="@+id/netflixBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_netflix"
+                    android:onClick="onServiceClick"
+                    />
+
+                <Button
+                    android:id="@+id/disneyBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_disney_plus_disable"
+                    android:layout_marginHorizontal="20dp"
+                    android:onClick="onServiceClick"
+                    />
+
+                <Button
+                    android:id="@+id/appleBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_apple_tv_plus_disable"
+                    android:onClick="onServiceClick"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="IMDB"
-                android:textSize="20sp"
-                android:textColor="#FFFFFF"
-                android:layout_marginLeft="20dp"/>
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginVertical="16dp">
+
+                <Button
+                    android:id="@+id/huluBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_hulu_disable"
+                    android:onClick="onServiceClick"
+                    />
+
+                <Button
+                    android:id="@+id/amazonBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_amazon_prime_disable"
+                    android:layout_marginHorizontal="20dp"
+                    android:onClick="onServiceClick"
+                    />
+
+                <Button
+                    android:id="@+id/hboBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_hbo_max_disable"
+                    android:onClick="onServiceClick"/>
+
+            </LinearLayout>
+
 
             <Spinner
-                android:id="@+id/imdbSpinner"
+                android:id="@+id/genreSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/imdbScore"
+                android:entries="@array/spinner_genres"
                 android:layout_marginLeft="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginVertical="16dp"
+                android:layout_marginLeft="10dp"
+                >
+                <CheckBox
+                    android:id="@+id/movieCB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Movie"
+                    android:textColor="#FFFFFF"
+                    android:buttonTint="#FFFFFF"
+                    android:padding="5dp"
+                    android:gravity="start"
+                    />
+
+                <CheckBox
+                    android:id="@+id/showCB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TV Show"
+                    android:textColor="#FFFFFF"
+                    android:buttonTint="#FFFFFF"
+                    android:padding="5dp"
+                    android:gravity="end"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IMDB"
+                    android:textSize="20sp"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginLeft="20dp"/>
+
+                <Spinner
+                    android:id="@+id/imdbSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/imdbScore"
+                    android:layout_marginLeft="10dp"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/spinButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spin_button_round"
+                android:text="@string/spinBtn"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:onClick="onSpin"/>
+
+
 
         </LinearLayout>
 
+    </ScrollView>
 
 
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

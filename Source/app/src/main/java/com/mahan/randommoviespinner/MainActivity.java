@@ -2,29 +2,54 @@ package com.mahan.randommoviespinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.GlideException;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
 
-    private Button netflixgBtn, disneyplusBtn, appleBtn, huluBtn, amazonBtn, hboBtn;
+import java.util.HashMap;
+
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+
+    private Button spinBtn, netflixgBtn, disneyplusBtn, appleBtn, huluBtn, amazonBtn, hboBtn;
     private Spinner genreSpinner,imdbSpinner;
     private CheckBox movieCB, showCB;
+    private LinearLayout mainLinear;
 
 
-    private boolean[] chosenServices;
+    private HashMap<String,Boolean> chosenServices;
+    private boolean canSpin;
     private int totalServicesSelected;
+    private HashMap<String,String> headerCodes;
+
+    RequestQueue requestQueue;
+
+    private LinearLayout movieView;
 
 
     @Override
@@ -32,14 +57,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestQueue = Volley.newRequestQueue(this);
+
         netflixgBtn = findViewById(R.id.netflixBtn);
         disneyplusBtn = findViewById(R.id.disneyBtn);
         appleBtn = findViewById(R.id.appleBtn);
         huluBtn = findViewById(R.id.huluBtn);
         amazonBtn = findViewById(R.id.amazonBtn);
         hboBtn = findViewById(R.id.hboBtn);
+        movieCB = findViewById(R.id.movieCB);
+        showCB = findViewById(R.id.showCB);
+        mainLinear = findViewById(R.id.mainLinear);
+        spinBtn = findViewById(R.id.spinButton);
 
-        chosenServices = new boolean[] {true,false,false,false,false,false};
+        canSpin = true;
         totalServicesSelected = 1;
 
         genreSpinner = findViewById(R.id.genreSpinner);
@@ -48,14 +79,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 R.layout.colored_spinner_layout);
         arrayAdapter.setDropDownViewResource(R.layout.colored_spinner_dropwdown_layout);
         genreSpinner.setAdapter(arrayAdapter);
-        genreSpinner.setOnItemSelectedListener(this);
 
 
-        movieCB = findViewById(R.id.movieCB);
+
         movieCB.setChecked(true);
         movieCB.setOnCheckedChangeListener(this);
 
-        showCB = findViewById(R.id.showCB);
         showCB.setChecked(true);
         showCB.setOnCheckedChangeListener(this);
 
@@ -65,102 +94,334 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 R.layout.colored_spinner_layout);
         arrayAdapter2.setDropDownViewResource(R.layout.colored_spinner_dropwdown_layout);
         imdbSpinner.setAdapter(arrayAdapter2);
-        imdbSpinner.setOnItemSelectedListener(this);
+
+        canSpin = true;
+
+        initializeHashMaps();
 
 
 
 
+    }
 
+    private void initializeHashMaps() {
+        chosenServices = new HashMap<>();
+        chosenServices.put("netflix",true);
+        chosenServices.put("amazon_prime",false);
+        chosenServices.put("hulu_plus",false);
+        chosenServices.put("disney_plus",false);
+        chosenServices.put("hbo_max",false);
+        chosenServices.put("apple_tv_plus",false);
+
+        headerCodes = new HashMap<>();
+        headerCodes.put("Action & Adventure","5");
+        headerCodes.put("Animation","6");
+        headerCodes.put("Anime","39");
+        headerCodes.put("Biography","7");
+        headerCodes.put("Children","8");
+        headerCodes.put("Comedy","9");
+        headerCodes.put("Crime","10");
+        headerCodes.put("Cult","41");
+        headerCodes.put("Documentary","11");
+        headerCodes.put("Drama","3");
+        headerCodes.put("Family","12");
+        headerCodes.put("Fantasy","13");
+        headerCodes.put("Food","15");
+        headerCodes.put("Game Show","16");
+        headerCodes.put("History","17");
+        headerCodes.put("Home & Garden","18");
+        headerCodes.put("Horror","19");
+        headerCodes.put("Independent","43");
+        headerCodes.put("Musical","22");
+        headerCodes.put("Mystery","23");
+        headerCodes.put("Reality","25");
+        headerCodes.put("Romance","4");
+        headerCodes.put("Science-Fiction","26");
+        headerCodes.put("Sports","29");
+        headerCodes.put("Stand-up & Talk","45");
+        headerCodes.put("Thriller","32");
+        headerCodes.put("Travel","33");
+        headerCodes.put(">9","9");
+        headerCodes.put(">8","8");
+        headerCodes.put(">7","7");
+        headerCodes.put(">6","6");
+        headerCodes.put(">5","5");
+
+    }
+
+    public void onSpin(final View view){
+        spinBtn.setText("SPINNING...");
+        if(canSpin) {
+            canSpin = false;
+
+            if (movieView != null){
+                mainLinear.removeView(movieView);
+            }
+
+            StringBuilder urlBuilder = new StringBuilder("https://api.reelgood.com/v3.0/content/random?");
+
+            HashMap<String, String> headers = new HashMap<>();
+
+            if (movieCB.isChecked() && showCB.isChecked()) {
+                headers.put("content_kind", "both");
+            } else if (!movieCB.isChecked() && showCB.isChecked()) {
+                headers.put("content_kind", "show");
+            } else if (movieCB.isChecked() && !showCB.isChecked()) {
+                headers.put("content_kind", "movie");
+            }
+
+            headers.put("free", "false");
+            headers.put("nocache", "true");
+
+            if (!genreSpinner.getSelectedItem().toString().equals("All Genres")) {
+                System.out.println(genreSpinner.getSelectedItem().toString());
+                headers.put("genre", headerCodes.get(genreSpinner.getSelectedItem().toString()));
+            }
+
+            if (!imdbSpinner.getSelectedItem().toString().equals("Any")) {
+                System.out.println(genreSpinner.getSelectedItem().toString());
+                headers.put("minimum_imdb", headerCodes.get(imdbSpinner.getSelectedItem().toString()));
+            }
+
+            headers.put("region", "us");
+
+            StringBuilder services = new StringBuilder();
+            for (HashMap.Entry<String,Boolean> service : chosenServices.entrySet()){
+                if(service.getValue()){
+                    services.append(service.getKey()+"%2C");
+                }
+            }
+            String sources = services.substring(0,services.length()-3);
+
+            headers.put("sources",sources);
+
+            for (HashMap.Entry<String,String> header: headers.entrySet()){
+                urlBuilder.append(header.getKey() + "=" + header.getValue() + "&");
+            }
+
+            String url = urlBuilder.substring(0,urlBuilder.length()-1);
+
+            StringRequest randomRequest = new StringRequest(
+                    Request.Method.GET,
+                    url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                setMovie(new JSONObject(response));
+                            } catch (JSONException e) {
+                                onSpin(view);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                            spinBtn.setText("Failed to spin2 :(");
+                        }
+                    }
+            );
+
+            requestQueue.add(randomRequest);
+
+
+        }
+
+
+
+    }
+
+    private void setMovie(JSONObject result) throws JSONException {
+        System.out.println(result);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        movieView = (LinearLayout) inflater.inflate(R.layout.movie_layout,null);
+
+
+        String id = result.getString("id");
+
+        String title = result.getString("title");
+        TextView nameView = movieView.findViewById(R.id.MovieTitle);
+        nameView.setText(title);
+
+        String year = (new StringBuilder(result.getString("released_on"))).substring(0,4);
+        TextView yearView = movieView.findViewById(R.id.yearView);
+        yearView.setText(year);
+
+        String imdbScore = "IMDB: " + result.getString("imdb_rating") + "/10";
+        TextView imdbView = movieView.findViewById(R.id.imdbView);
+        imdbView.setText(imdbScore);
+
+        String duration;
+        if(result.getString("content_type").equals("m")){
+            duration = minutesToHours(result.getInt("runtime"));
+        }
+        else {
+            duration = result.getInt("season_count") + " seasons";
+        }
+        TextView durationView = movieView.findViewById(R.id.durationView);
+        durationView.setText(duration);
+
+        JSONArray genresJson = result.getJSONArray("genres");
+        JSONArray shortGenres;
+        if(genresJson.length() > 3){
+            shortGenres = new JSONArray();
+            shortGenres.put(genresJson.getInt(0));
+            shortGenres.put(genresJson.getInt(1));
+            shortGenres.put(genresJson.getInt(2));
+        }
+        else{
+            shortGenres = genresJson;
+        }
+
+        String genres = valueToKey(shortGenres);
+        TextView genreView = movieView.findViewById(R.id.movieGenreView);
+        genreView.setText(genres);
+
+        String type = "show";
+        if(result.getString("content_type").equals("m")){
+            type = "movie";
+        }
+        ImageView moviePosterView = movieView.findViewById(R.id.moviePosterView);
+        String imgUrl = "https://img.reelgood.com/content/" + type + "/" + id + "/poster-780.webp";
+        Glide.with(this).load(imgUrl).placeholder(R.drawable.ic_no_poster).into(moviePosterView);
+
+
+
+
+        String description = limitString(result.getString("overview"),30);
+        TextView descriptionView = movieView.findViewById(R.id.descriptionView);
+        descriptionView.setText(description);
+
+        Button watchButton = movieView.findViewById(R.id.watchButtonView);
+        watchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse(result.getString())
+            }
+        });
+
+        mainLinear.addView(movieView);
+
+        spinBtn.setText("SPIN");
+        canSpin = true;
+    }
+
+    private String valueToKey(JSONArray arr) throws JSONException {
+        if(arr.length() == 0){return "";};
+
+        String res = "";
+        for (int i = 0; i < arr.length() ; i++) {
+            for (HashMap.Entry<String,String> entry : headerCodes.entrySet()){
+                if(entry.getValue().equals(arr.getString(i)) && entry.getKey().length() > 2){
+                    res = res + entry.getKey() + ", ";
+                }
+            }
+        }
+
+        return res.substring(0,res.length()-2);
+    }
+
+    private String minutesToHours(int min){
+        int hours = 0;
+        while (min > 60){
+            min = min % 60;
+            hours += 1;
+        }
+        return hours + "h " + min + "m";
+    }
+
+    private String limitString(String s, int n){
+        String[] words = s.split(" ");
+        if (words.length < n){
+            return s;
+        }
+
+
+        StringBuilder shorterS = new StringBuilder();
+        for(int i=0; i<n; i++){
+            shorterS.append(words[i]).append(" ");
+        }
+
+        return shorterS.substring(0,shorterS.length()-1) + "...";
     }
 
     public void onServiceClick(View view){
 
-        System.out.println(totalServicesSelected);
-
         switch (view.getId()){
             case R.id.netflixBtn:
-                if(chosenServices[0] && totalServicesSelected > 1) {
+                if(chosenServices.get("netflix") && totalServicesSelected > 1) {
                     netflixgBtn.setBackgroundResource(R.drawable.ic_netflix_disabled);
-                    chosenServices[0] = false;
+                   chosenServices.put("netflix",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[0]){
+                else if (!chosenServices.get("netflix")){
                     netflixgBtn.setBackgroundResource(R.drawable.ic_netflix);
-                    chosenServices[0] = true;
+                    chosenServices.put("netflix",true);
                     totalServicesSelected += 1;
                 }
                 break;
             case R.id.disneyBtn:
-                if(chosenServices[1] && totalServicesSelected > 1) {
+                if(chosenServices.get("disney_plus") && totalServicesSelected > 1) {
                     disneyplusBtn.setBackgroundResource(R.drawable.ic_disney_plus_disable);
-                    chosenServices[1] = false;
+                    chosenServices.put("disney_plus",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[1]) {
+                else if (!chosenServices.get("disney_plus")) {
                     disneyplusBtn.setBackgroundResource(R.drawable.ic_disney_plus);
-                    chosenServices[1] = true;
+                    chosenServices.put("disney_plus",true);
                     totalServicesSelected += 1;
                 }
                 break;
             case R.id.appleBtn:
-                if(chosenServices[2] && totalServicesSelected > 1) {
+                if(chosenServices.get("apple_tv_plus") && totalServicesSelected > 1) {
                     appleBtn.setBackgroundResource(R.drawable.ic_apple_tv_plus_disable);
-                    chosenServices[2] = false;
+                    chosenServices.put("apple_tv_plus",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[2]) {
+                else if (!chosenServices.get("apple_tv_plus")) {
                     appleBtn.setBackgroundResource(R.drawable.ic_apple_tv_plus);
-                    chosenServices[2] = true;
+                    chosenServices.put("apple_tv_plus",true);
                     totalServicesSelected += 1;
                 }
                 break;
             case R.id.huluBtn:
-                if(chosenServices[3] && totalServicesSelected > 1) {
+                if(chosenServices.get("hulu_plus") && totalServicesSelected > 1) {
                     huluBtn.setBackgroundResource(R.drawable.ic_hulu_disable);
-                    chosenServices[3] = false;
+                    chosenServices.put("hulu_plus",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[3]) {
+                else if (!chosenServices.get("hulu_plus")) {
                     huluBtn.setBackgroundResource(R.drawable.ic_hulu);
-                    chosenServices[3] = true;
+                    chosenServices.put("hulu_plus",true);
                     totalServicesSelected += 1;
                 }
                 break;
             case R.id.amazonBtn:
-                if(chosenServices[4] && totalServicesSelected > 1) {
+                if(chosenServices.get("amazon_prime") && totalServicesSelected > 1) {
                     amazonBtn.setBackgroundResource(R.drawable.ic_amazon_prime_disable);
-                    chosenServices[4] = false;
+                    chosenServices.put("amazon_prime",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[4]) {
+                else if (!chosenServices.get("amazon_prime")) {
                     amazonBtn.setBackgroundResource(R.drawable.ic_amazon_prime);
-                    chosenServices[4] = true;
+                    chosenServices.put("amazon_prime",true);
                     totalServicesSelected += 1;
                 }
                 break;
             case R.id.hboBtn:
-                if(chosenServices[5] && totalServicesSelected > 1) {
+                if(chosenServices.get("hbo_max") && totalServicesSelected > 1) {
                     hboBtn.setBackgroundResource(R.drawable.ic_hbo_max_disable);
-                    chosenServices[5] = false;
+                    chosenServices.put("hbo_max",false);
                     totalServicesSelected -= 1;
                 }
-                else if (!chosenServices[5]) {
+                else if (!chosenServices.get("hbo_max")) {
                     hboBtn.setBackgroundResource(R.drawable.ic_hbo_max);
-                    chosenServices[5] = true;
+                    chosenServices.put("hbo_max",true);
                     totalServicesSelected += 1;
                 }
                 break;
         }
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this,parent.getSelectedItem().toString(),Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
