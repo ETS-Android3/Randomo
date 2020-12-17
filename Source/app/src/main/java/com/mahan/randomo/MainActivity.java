@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     RequestQueue requestQueue;
 
     private LinearLayout movieView;
+    private SharedPreferences sharedPreferences;
+    private ArrayList<String> seenMovies;
 
 
     @Override
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         totalServicesSelected = 1;
 
         genreSpinner = findViewById(R.id.genreSpinner);
-        ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this,
                 R.array.spinner_genres,
                 R.layout.colored_spinner_layout);
         arrayAdapter.setDropDownViewResource(R.layout.colored_spinner_dropwdown_layout);
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         showCB.setOnCheckedChangeListener(this);
 
         imdbSpinner = findViewById(R.id.imdbSpinner);
-        ArrayAdapter arrayAdapter2 = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> arrayAdapter2 = ArrayAdapter.createFromResource(this,
                 R.array.imdbScore,
                 R.layout.colored_spinner_layout);
         arrayAdapter2.setDropDownViewResource(R.layout.colored_spinner_dropwdown_layout);
@@ -98,11 +103,20 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         initializeHashMaps();
 
+        sharedPreferences = getSharedPreferences("com.mahan.freegamesnotifier",MODE_PRIVATE);
+
+        try {
+            loadSeen();
+        }catch (IOException e){
+
+        }
 
 
+    }
 
-
-
+    private void loadSeen() throws IOException {
+        String seenString = sharedPreferences.getString("seenContent", ObjectSerializer.serialize(new ArrayList<String>()));
+        seenMovies = (ArrayList<String>) ObjectSerializer.deserialize(seenString);
 
     }
 
@@ -183,12 +197,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             headers.put("nocache", "true");
 
             if (!genreSpinner.getSelectedItem().toString().equals("All Genres")) {
-                System.out.println(genreSpinner.getSelectedItem().toString());
                 headers.put("genre", headerCodes.get(genreSpinner.getSelectedItem().toString()));
             }
 
             if (!imdbSpinner.getSelectedItem().toString().equals("Any")) {
-                System.out.println(genreSpinner.getSelectedItem().toString());
                 headers.put("minimum_imdb", headerCodes.get(imdbSpinner.getSelectedItem().toString()));
             }
 
@@ -241,13 +253,21 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     }
 
+    private void saveMovie(String id) throws IOException {
+        seenMovies.add(id);
+        String seenString = ObjectSerializer.serialize(seenMovies);
+        sharedPreferences.edit().putString("seenContent",seenString).apply();
+    }
+
     private void setMovie(JSONObject result, final String src) throws JSONException {
-        System.out.println(result);
+        final String id = result.getString("id");
+
+        if(seenMovies.contains(id)){
+            onSpin(null);
+        }
+
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         movieView = (LinearLayout) inflater.inflate(R.layout.movie_layout,null);
-
-
-        String id = result.getString("id");
 
         String title = result.getString("title");
         TextView nameView = movieView.findViewById(R.id.MovieTitle);
@@ -304,6 +324,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         TextView descriptionView = movieView.findViewById(R.id.descriptionView);
         descriptionView.setText(description);
 
+        final Button seenBtn = movieView.findViewById(R.id.seenBtn);
+        seenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    saveMovie(id);
+                    seenBtn.setText("Saved!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         final Button watchButton = movieView.findViewById(R.id.watchButtonView);
         StringBuilder urlBuilder = new StringBuilder("https://api.reelgood.com/v3.0/content/" + type + "/" + id + "?");
 
@@ -345,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private void setButton(JSONObject details, Button btn, String src, String type) throws JSONException {
-        System.out.println(details);
+
         JSONArray sources = details.getJSONArray("sources");
         String source = sources.getString(0);
         for (int i = 0; i < sources.length(); i++) {
@@ -354,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 break;
             }
         }
-        System.out.println(source);
+
 
         JSONArray availability;
         if(type.equals("movie")){
@@ -385,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         btn.setBackgroundResource(resource);
         btn.setText("");
-        System.out.println(link);
+
         final String finalLink = link;
         final String finalLinkBackup = linkBackup;
         btn.setOnClickListener(new View.OnClickListener() {
@@ -411,7 +444,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private String valueToKey(JSONArray arr) throws JSONException {
-        System.out.println(arr);
         if(arr.length() == 0){return "";};
 
         String res = "";
