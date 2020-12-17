@@ -221,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             }
 
             String url = urlBuilder.substring(0,urlBuilder.length()-1);
-
             StringRequest randomRequest = new StringRequest(
                     Request.Method.GET,
                     url,
@@ -231,7 +230,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                             try {
                                 setMovie(new JSONObject(response), headers.get("sources"));
                             } catch (JSONException e) {
-                                onSpin(view);
+                                spinBtn.setText("Nothing found...");
+                                canSpin = true;
                             }
                         }
                     },
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             error.printStackTrace();
-                            spinBtn.setText("Failed to spin2 :(");
+                            spinBtn.setText("Failed to spin...");
                         }
                     }
             );
@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         if(seenMovies.contains(id)){
             onSpin(null);
+            canSpin = true;
         }
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
