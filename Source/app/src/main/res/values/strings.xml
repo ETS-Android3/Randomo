@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Random Movie Spinner</string>
+    <string name="app_name">Randomo</string>
     <string name="spinBtn">SPIN</string>
     <string-array name="spinner_genres">
         <item>All Genres</item>
@@ -21,6 +21,7 @@
         <item>Home &amp; Garden</item>
         <item>Horror</item>
         <item>Independent</item>
+        <item>LGBTQ</item>
         <item>Musical</item>
         <item>Mystery</item>
         <item>Reality</item>

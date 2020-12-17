@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginHorizontal="16dp"
             android:orientation="vertical"
             android:layout_marginVertical="20dp">
 
@@ -97,7 +97,7 @@
                 android:entries="@array/spinner_genres"
                 android:layout_marginLeft="10dp"/>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -106,6 +106,9 @@
                 >
                 <CheckBox
                     android:id="@+id/movieCB"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Movie"
@@ -117,6 +120,9 @@
 
                 <CheckBox
                     android:id="@+id/showCB"
+                    app:layout_constraintStart_toEndOf="@id/movieCB"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TV Show"
@@ -127,21 +133,26 @@
                     />
 
                 <TextView
+                    app:layout_constraintEnd_toStartOf="@id/imdbSpinner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="IMDB"
                     android:textSize="20sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginLeft="20dp"/>
+                    android:layout_marginEnd="10dp"/>
 
                 <Spinner
                     android:id="@+id/imdbSpinner"
-                    android:layout_width="match_parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:entries="@array/imdbScore"
-                    android:layout_marginLeft="10dp"/>
+                    android:entries="@array/imdbScore"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
                 android:id="@+id/spinButton"

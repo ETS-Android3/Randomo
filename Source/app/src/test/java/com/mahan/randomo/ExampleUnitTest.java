@@ -1,4 +1,4 @@
-package com.mahan.randommoviespinner;
+package com.mahan.randomo;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.mahan.randommoviespinner;
+package com.mahan.randomo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,23 +17,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.GlideException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -138,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         headerCodes.put("Home & Garden","18");
         headerCodes.put("Horror","19");
         headerCodes.put("Independent","43");
+        headerCodes.put("LGBTQ","37");
         headerCodes.put("Musical","22");
         headerCodes.put("Mystery","23");
         headerCodes.put("Reality","25");
@@ -257,10 +254,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         nameView.setText(title);
 
         String year = (new StringBuilder(result.getString("released_on"))).substring(0,4);
+        if(year.equals("null")){year="";}
         TextView yearView = movieView.findViewById(R.id.yearView);
         yearView.setText(year);
 
-        String imdbScore = "IMDB: " + result.getString("imdb_rating") + "/10";
+        String score = result.getString("imdb_rating");
+        if(score.equals("null")){score = "?";}
+        String imdbScore = "IMDB: " + score + "/10";
         TextView imdbView = movieView.findViewById(R.id.imdbView);
         imdbView.setText(imdbScore);
 
@@ -271,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         else {
             duration = result.getInt("season_count") + " seasons";
         }
+
         TextView durationView = movieView.findViewById(R.id.durationView);
         durationView.setText(duration);
 
@@ -297,8 +298,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         ImageView moviePosterView = movieView.findViewById(R.id.moviePosterView);
         String imgUrl = "https://img.reelgood.com/content/" + type + "/" + id + "/poster-780.webp";
         Glide.with(this).load(imgUrl).placeholder(R.drawable.ic_no_poster).into(moviePosterView);
-
-
 
 
         String description = limitString(result.getString("overview"),30);
@@ -343,13 +342,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
         requestQueue.add(linkRequest);
 
-        mainLinear.addView(movieView);
-
-        spinBtn.setText("SPIN");
-        canSpin = true;
     }
 
     private void setButton(JSONObject details, Button btn, String src, String type) throws JSONException {
+        System.out.println(details);
         JSONArray sources = details.getJSONArray("sources");
         String source = sources.getString(0);
         for (int i = 0; i < sources.length(); i++) {
@@ -358,6 +354,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 break;
             }
         }
+        System.out.println(source);
 
         JSONArray availability;
         if(type.equals("movie")){
@@ -368,12 +365,18 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             availability = details.getJSONObject("episodes").getJSONObject(epID).getJSONArray("availability");
         }
 
-        String link = availability.getJSONObject(0).getJSONObject("source_data").getJSONObject("links").getString("android");
-        String linkBackup = availability.getJSONObject(0).getJSONObject("source_data").getJSONObject("links").getString("web");
+
+        String link = "https://i.pinimg.com/originals/66/9a/78/669a787e739c53fd56e39159b2fa5c9e.gif";
+        String linkBackup = "https://i.pinimg.com/originals/66/9a/78/669a787e739c53fd56e39159b2fa5c9e.gif";
         for (int i = 0; i < availability.length(); i++) {
             if(availability.getJSONObject(i).getString("source_name").equals(source)){
-                link = availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").getString("android");
                 linkBackup = availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").getString("web");
+                if(availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").isNull("android")) {
+                    link = linkBackup;
+                }
+                else{
+                    link = availability.getJSONObject(i).getJSONObject("source_data").getJSONObject("links").getString("android");
+                }
                 break;
 
             }
@@ -400,13 +403,18 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             }
         });
 
+        mainLinear.addView(movieView);
+        spinBtn.setText("SPIN");
+        canSpin = true;
+
 
     }
 
     private String valueToKey(JSONArray arr) throws JSONException {
+        System.out.println(arr);
         if(arr.length() == 0){return "";};
 
-        String res = ", ";
+        String res = "";
         for (int i = 0; i < arr.length() ; i++) {
             for (HashMap.Entry<String,String> entry : headerCodes.entrySet()){
                 if(entry.getValue().equals(arr.getString(i)) && entry.getKey().length() > 2){
