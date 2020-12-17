@@ -191,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 headers.put("content_kind", "show");
             } else if (movieCB.isChecked() && !showCB.isChecked()) {
                 headers.put("content_kind", "movie");
+            }else{
+                canSpin = true;
+                onSpin(null);
             }
 
             headers.put("free", "false");
@@ -253,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     }
 
-    private void saveMovie(String id) throws IOException {
-        seenMovies.add(id);
+    private void saveMovie(String title) throws IOException {
+        seenMovies.add(title);
         String seenString = ObjectSerializer.serialize(seenMovies);
         sharedPreferences.edit().putString("seenContent",seenString).apply();
     }
@@ -262,7 +265,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private void setMovie(JSONObject result, final String src) throws JSONException {
         final String id = result.getString("id");
 
-        if(seenMovies.contains(id)){
+        final String title = result.getString("title");
+
+
+        if(seenMovies.contains(title)){
             onSpin(null);
             canSpin = true;
         }
@@ -270,7 +276,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         movieView = (LinearLayout) inflater.inflate(R.layout.movie_layout,null);
 
-        String title = result.getString("title");
         TextView nameView = movieView.findViewById(R.id.MovieTitle);
         nameView.setText(title);
 
@@ -330,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             @Override
             public void onClick(View v) {
                 try {
-                    saveMovie(id);
+                    saveMovie(title);
                     seenBtn.setText("Saved!");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -445,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     private String valueToKey(JSONArray arr) throws JSONException {
+
         if(arr.length() == 0){return "";};
 
         String res = "";
@@ -455,8 +461,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 }
             }
         }
-
-        return res.substring(0,res.length()-2);
+        if(res.length() > 2){
+            res = res.substring(0,res.length()-2);
+        }
+        return res;
     }
 
     private String minutesToHours(int min){
