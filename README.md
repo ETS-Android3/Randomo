@@ -1,5 +1,5 @@
 # Randomo
-![Icon](https://github.com/mahan201/Randomo/blob/main/Source/app/src/main/res/mipmap-xxxhdpi/spinner_icon_round.png "Icon")
+<img src="https://github.com/mahan201/Randomo/blob/main/Source/app/src/main/res/mipmap-xxxhdpi/spinner_icon_round.png">
 
 ## Features
 - Suggest a random movie or Tv show to watch.
