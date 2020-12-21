@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     private HashMap<String,Boolean> chosenServices;
     private boolean canSpin;
+    private boolean canSave;
     private int totalServicesSelected;
     private HashMap<String,String> headerCodes;
 
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         imdbSpinner.setAdapter(arrayAdapter2);
 
         canSpin = true;
+        canSave = true;
 
         initializeHashMaps();
 
@@ -262,10 +264,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         sharedPreferences.edit().putString("seenContent",seenString).apply();
     }
 
+    private void deleteMovie(String title) throws IOException {
+        seenMovies.remove(title);
+        String seenString = ObjectSerializer.serialize(seenMovies);
+        sharedPreferences.edit().putString("seenContent",seenString).apply();
+    }
+
     private void setMovie(JSONObject result, final String src) throws JSONException {
         final String id = result.getString("id");
 
         final String title = result.getString("title");
+
 
 
         if(seenMovies.contains(title)){
@@ -335,12 +344,24 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             @Override
             public void onClick(View v) {
                 try {
-                    saveMovie(title);
-                    seenBtn.setText("Saved!");
+                    System.out.println(seenMovies);
+                    if(canSave){
+                        canSave = false;
+                        saveMovie(title);
+                        seenBtn.setText("SAVED!");
+                    }
+                    else{
+                        canSave = true;
+                        deleteMovie(title);
+                        seenBtn.setText("SEEN IT?");
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
+
         });
 
         final Button watchButton = movieView.findViewById(R.id.watchButtonView);
