@@ -14,7 +14,7 @@
 - Choose content type from Movie or TV Show or both.
 - Choose a minimum IMDB score for the random movie.
 - Open the suggested content in the appropriate streaming service.
-- If the suggested content is already seen by the user, they can choose to never be recommended that movie again.
+- If the suggested content is already seen by the user, they can choose to never be recommended that movie.
 
 ## Installation
 Google Play Store incoming!
