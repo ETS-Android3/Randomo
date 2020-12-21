@@ -2,7 +2,7 @@
 <img src="https://github.com/mahan201/Randomo/blob/main/Source/app/src/main/res/mipmap-xxxhdpi/spinner_icon_round.png">
 
 ## Features
-- Suggest a random movie or Tv show to watch.
+- Suggests a random movie or TV show to watch.
 - Choose the streaming service from a selection of 6 streaming services:
 	 - Netflix
 	 - Disney+
