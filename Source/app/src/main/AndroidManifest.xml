@@ -13,6 +13,10 @@
         android:roundIcon="@mipmap/spinner_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7759260938966050~7541556868"/>
+
         <activity android:name="com.mahan.randomo.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -27,6 +27,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private Spinner genreSpinner,imdbSpinner;
     private CheckBox movieCB, showCB;
     private LinearLayout mainLinear;
+    private AdView adView;
 
 
     private HashMap<String,Boolean> chosenServices;
@@ -61,6 +67,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        adView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -464,6 +480,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         });
 
         mainLinear.addView(movieView);
+
         spinBtn.setText("SPIN");
         canSpin = true;
 
