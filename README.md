@@ -16,9 +16,12 @@
 - Open the suggested content in the appropriate streaming service.
 - If the suggested content is already seen by the user, they can choose to never be recommended that movie.
 
-## Installation
-Google Play Store incoming!
-For now you can download the APK straight from [here](https://github.com/mahan201/Randomo/blob/main/randomo.apk "here") and install it on your Android device (Android 8.0 +)
+## Why?
+This project helped me further my skills with Android development and to learn new concepts such as:
+	- Multi-threaded applications
+	- Become proficient with open source APIs
+	- Store array data structures in Android's preferences by Serializing the object into a string
+	- De-Serializing a string representation of our data to load it from our app preferences.
 
 ## Screenshots
 <img src="https://github.com/mahan201/Randomo/blob/main/Screenshots/SS%20(1).png" width=250>
