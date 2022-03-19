@@ -17,7 +17,7 @@
 - If the suggested content is already seen by the user, they can choose to never be recommended that movie.
 
 ## Why?
-This project helped me further my skills with Android development and to learn new concepts such as:
+- This project helped me further my skills with Android development and to learn new concepts such as:
 	- Multi-threaded applications
 	- Become proficient with open source APIs
 	- Store array data structures in Android's preferences by Serializing the object into a string
